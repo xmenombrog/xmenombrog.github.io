@@ -2,7 +2,6 @@
 // theme is applied before the page first paints.
 (() => {
   const root = document.getElementById('top');
-  const accentClass = 'a-blue';
   const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
   let saved = null;
@@ -15,7 +14,7 @@
 
   const applyTheme = () => {
     const isDark = currentTheme() === 'dark';
-    root.className = (isDark ? 't-dark ' : 't-light ') + accentClass;
+    root.className = isDark ? 't-night' : 't-day';
     const toggle = document.getElementById('theme-toggle');
     if (toggle) {
       const label = isDark ? 'Switch to light theme' : 'Switch to dark theme';
@@ -38,9 +37,9 @@
       applyTheme();
     });
 
-    // Project filter chips (home page only).
-    const chips = document.querySelectorAll('.chip[data-filter]');
-    const cards = document.querySelectorAll('#projects .card');
+    // Project filter tabs (home page only).
+    const chips = document.querySelectorAll('.tab[data-filter]');
+    const cards = document.querySelectorAll('#projects [data-cats]');
     const empty = document.getElementById('no-projects');
     chips.forEach((chip) => {
       chip.addEventListener('click', () => {
