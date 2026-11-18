@@ -1,0 +1,104 @@
+/* Shared styles for the interactive demos on the project pages.
+   Colors come from the page theme tokens (--surface, --ink, --accent, ...). */
+
+.demo { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 20px; }
+.demo-card { min-width: 0; display: flex; flex-direction: column; gap: 22px; padding: clamp(20px, 2.6vw, 32px); background: var(--surface); border: 1px solid var(--line-soft); border-radius: 20px; box-sizing: border-box; }
+.demo-card--wide { grid-column: 1 / -1; }
+.demo-h { margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 500; font-size: 26px; line-height: 1.15; }
+.demo-label { margin: 0; font-size: 12.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.demo-note { margin: 0; font-size: 14px; line-height: 1.55; color: var(--muted); }
+.demo-note strong { color: var(--ink-2); font-weight: 600; }
+.mono { font-family: 'DM Mono', ui-monospace, Menlo, monospace; }
+
+/* Fields and sliders */
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; }
+.field-row label, .field-row .field-name { font-size: 15px; font-weight: 500; }
+.field-val { font-family: 'DM Mono', ui-monospace, Menlo, monospace; font-size: 13.5px; color: var(--ink-2); }
+.field input[type="range"] { width: 100%; margin: 0; height: 28px; accent-color: var(--accent); cursor: pointer; }
+.field input[type="text"], .field select {
+  width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 14px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  font-family: 'DM Mono', ui-monospace, Menlo, monospace; font-size: 14px;
+}
+.field input[type="text"]:focus, .field select:focus { border-color: var(--accent); outline: none; }
+.check { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); margin: 0; }
+
+/* Chips and segmented controls */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 10px;
+  border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer;
+  font-family: inherit; font-size: 14.5px; font-weight: 500; transition: border-color .2s ease, background-color .2s ease;
+}
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.chip .dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 1px var(--line); flex: none; }
+.seg { align-self: flex-start; display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 12px; }
+.seg button {
+  min-width: 36px; min-height: 36px; padding: 0 8px; border: 0; border-radius: 8px; background: transparent;
+  color: var(--ink-2); font-family: 'DM Mono', ui-monospace, Menlo, monospace; font-size: 14px; cursor: pointer;
+}
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+
+.btn-demo {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; padding: 0 20px;
+  border: 0; border-radius: 12px; background: var(--btn); color: var(--btn-ink); cursor: pointer;
+  font-family: inherit; font-size: 15px; font-weight: 500; letter-spacing: 0.03em; transition: background-color .2s ease, color .2s ease;
+}
+.btn-demo:hover { background: var(--btn-hover); }
+.btn-demo:disabled { opacity: .55; cursor: progress; }
+.btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 18px;
+  border: 1px solid var(--line); border-radius: 12px; background: transparent; color: var(--ink); cursor: pointer;
+  font-family: inherit; font-size: 15px; font-weight: 500; transition: border-color .2s ease;
+}
+.btn-ghost:hover { border-color: var(--accent); }
+
+/* Stat tiles */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 12px; }
+.stat { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; border: 1px solid var(--line-soft); border-radius: 14px; background: var(--bg); }
+.stat-k { font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.stat-v { font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 30px; line-height: 1.1; font-variant-numeric: lining-nums tabular-nums; }
+.stat-s { font-size: 13.5px; line-height: 1.45; color: var(--ink-2); }
+
+/* Status pill: always icon + label, never color alone */
+.status { display: inline-flex; align-items: center; gap: 10px; align-self: flex-start; padding: 8px 14px 8px 10px; border-radius: 999px; border: 1px solid var(--line); font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+.status-icon { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 700; letter-spacing: 0; flex: none; }
+.status[data-tone="good"] .status-icon { background: #0ca30c; }
+.status[data-tone="warning"] .status-icon { background: #fab219; color: #18132D; }
+.status[data-tone="serious"] .status-icon { background: #ec835a; color: #18132D; }
+.status[data-tone="critical"] .status-icon { background: #d03b3b; }
+
+/* Lists of observations */
+.obs { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.obs li { display: flex; gap: 12px; align-items: baseline; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+.obs li::before { content: ""; width: 7px; height: 7px; flex: none; background: var(--accent-2); transform: translateY(-2px) rotate(45deg); }
+
+/* Tables */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line-soft); border-radius: 14px; }
+.table { width: 100%; border-collapse: collapse; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.table th, .table td { padding: 11px 14px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line-soft); }
+.table th:first-child, .table td:first-child { text-align: left; }
+.table thead th { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+.table tbody tr:last-child td { border-bottom: 0; }
+.table td.num-strong { font-weight: 600; }
+
+/* Code / console panels: always dark, like a terminal */
+.term { margin: 0; padding: 16px 18px; border-radius: 14px; background: #0B0E24; color: #DCD8EE; border: 1px solid rgba(239,237,248,0.12);
+  font-family: 'DM Mono', ui-monospace, Menlo, monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto; }
+.term .t-muted { color: #8E89A8; }
+.term .t-key { color: #C8AEFA; }
+.term .t-str { color: #9BE3B4; }
+.term .t-num { color: #F6C987; }
+.term .t-err { color: #FF8F8F; }
+.term .t-ok { color: #9BE3B4; }
+
+/* Tooltip shared by charts */
+.viz-tip { position: absolute; z-index: 5; pointer-events: none; min-width: 160px; max-width: 240px; padding: 10px 12px; border-radius: 10px;
+  background: var(--ink); color: var(--bg); font-size: 13px; line-height: 1.45; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+.viz-tip b { font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) { .demo * { transition: none !important; } }

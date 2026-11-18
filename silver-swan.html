@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Silver Swan — Project</title>
+<meta name="description" content="Silver Swan: an IoT home smart urinalysis system with native iOS and Android apps and an Enhanced Fuzzy k-NN hydration classifier you can try in the browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=DM+Mono:wght@400;500&amp;family=Jost:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/demos.css">
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#100B21}
+body:has(.t-day){background:#F7F6FB}
+.t-night{--bg:#100B21;--surface:#18132D;--surface-2:#221C3A;--ink:#EFEDF8;--ink-2:#CBC7DD;--muted:#A6A0BC;--line:#373350;--line-soft:#26223D;--accent:#C8AEFA;--accent-2:#F6A3AF;--btn:#C8AEFA;--btn-ink:#100B21;--btn-hover:#EFEDF8;--star:rgba(239,237,248,0.5);--star-dim:rgba(200,174,250,0.4);color-scheme:dark}
+.t-day{--bg:#F7F6FB;--surface:#FDFDFF;--surface-2:#EAE8F3;--ink:#18132D;--ink-2:#423E5B;--muted:#605C79;--line:#D1CFDD;--line-soft:#E2E0EA;--accent:#623BAB;--accent-2:#A6344F;--btn:#623BAB;--btn-ink:#F7F6FB;--btn-hover:#18132D;--star:rgba(24,19,45,0.22);--star-dim:rgba(98,59,171,0.24);color-scheme:light}
+.band{--band:#18132D;--band-ink:#EFEDF8;--band-muted:#A6A0BC;--band-line:#373350;--band-accent:#C8AEFA;--accent:#C8AEFA;--accent-2:#F6A3AF;--star:rgba(239,237,248,0.4);--star-dim:rgba(200,174,250,0.3)}
+.stars{background-image:radial-gradient(circle at 18% 26%,var(--star) 0 1px,transparent 1.6px),radial-gradient(circle at 72% 64%,var(--star-dim) 0 1.2px,transparent 2px),radial-gradient(circle at 44% 82%,var(--star) 0 0.7px,transparent 1.3px);background-size:190px 190px,270px 270px,350px 350px}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--accent)}
+.band a:hover{color:var(--band-accent)}
+.btn:hover{background:var(--btn-hover) !important;color:var(--btn-ink) !important}
+.toggle:hover{border-color:var(--accent) !important}
+.tile{transition:border-color .2s ease,background-color .2s ease}
+.tile:hover{border-color:var(--band-accent) !important;background-color:rgba(200,174,250,0.06) !important}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+::selection{background:var(--accent);color:var(--bg)}
+@media (max-width:600px){.mast-nav{order:3;width:100%}}
+.t-day .icon-sun,.t-night .icon-moon{display:none}
+[hidden]{display:none !important}
+[hidden]{display:none !important}
+.ss-swatch{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:8px;vertical-align:-2px;box-shadow:0 0 0 1px var(--line)}
+.ss-bars{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
+.ss-bar{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.ss-bar-val{font-size:11.5px;color:var(--ink-2);min-height:16px}
+.ss-bar-track{height:140px;width:100%;display:flex;align-items:flex-end;border-bottom:1px solid var(--line)}
+.ss-bar-fill{display:block;width:100%;border-radius:4px 4px 0 0;background:var(--accent);opacity:.4;transition:height .25s ease}
+.ss-bar.is-win .ss-bar-fill{opacity:1}
+.ss-bar-lv{font-size:12px;color:var(--muted)}
+</style>
+<script src="assets/silverswan/efknn.js" defer></script>
+</head>
+<body>
+<div id="top" class="t-night" style="background: var(--bg); color: var(--ink); font-family: 'Jost', 'Futura', 'Avenir Next', 'Century Gothic', sans-serif; font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: clip; transition: background-color 0.3s ease, color 0.3s ease">
+  <script src="site.js"></script>
+
+  <!-- Masthead and title, over a faint starfield -->
+  <div class="stars" style="border-bottom: 1px solid var(--line-soft)">
+    <header>
+      <div style="max-width: 1280px; margin: 0 auto; padding: 18px clamp(20px, 5vw, 64px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 32px">
+        <a href="index.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; margin-right: auto">
+          <span aria-hidden="true" style="display: inline-block; width: 8px; height: 8px; background: var(--accent-2); transform: rotate(45deg); flex: none"></span>
+          <span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 27px; font-weight: 500; line-height: 1; letter-spacing: 0.01em">Ombrog</span>
+        </a>
+        <nav class="mast-nav" aria-label="Site" style="display: flex; flex-wrap: wrap; gap: 0 28px; font-size: 14px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase">
+          <a href="index.html#projects" style="display: flex; align-items: center; min-height: 44px">Projects</a>
+          <a href="index.html#resume" style="display: flex; align-items: center; min-height: 44px">Résumé</a>
+          <a href="index.html#contact" style="display: flex; align-items: center; min-height: 44px">Contact</a>
+        </nav>
+        <button type="button" class="toggle" id="theme-toggle" aria-label="Switch to light theme" title="Switch to light theme" style="width: 44px; height: 44px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; transition: border-color 0.2s ease">
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"></path></svg>
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M4.6 4.6L6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Title -->
+    <section aria-labelledby="pj-title" style="max-width: 1280px; margin: 0 auto; padding: clamp(28px, 4vw, 48px) clamp(20px, 5vw, 64px) clamp(48px, 6vw, 80px); box-sizing: border-box; display: flex; flex-direction: column; gap: 28px">
+      <a href="index.html#projects" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-2)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg>
+        <span>All projects</span>
+      </a>
+      <p style="margin: 20px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; font-size: 13px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted)">
+        <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; background: var(--accent-2); transform: rotate(45deg); flex: none"></span>
+        <span>IoT · Thesis</span>
+        <span>2026</span>
+        <span style="color: var(--accent-2)">Lead Developer</span>
+      </p>
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 32px 64px">
+        <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 28px">
+          <h1 id="pj-title" style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: clamp(3.5rem, 10vw, 9rem); line-height: 0.92; letter-spacing: -0.03em; text-wrap: balance">Silver Swan</h1>
+          <p style="margin: 0; max-width: 40rem; font-size: clamp(1.125rem, 1.5vw, 1.3rem); line-height: 1.6; color: var(--ink-2); text-wrap: pretty">An IoT home smart urinalysis system. A portable, offline device reads the pH, specific gravity and color of a urine sample, and a paired phone app classifies hydration.</p>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
+          <a class="btn" href="#demo" style="display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 26px; border-radius: 12px; background: var(--btn); color: var(--btn-ink); font-size: 15px; font-weight: 500; letter-spacing: 0.04em; transition: background-color 0.2s ease, color 0.2s ease">
+            <span>Try the classifier</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M6 13l6 6 6-6"></path></svg>
+          </a>
+          <a href="https://silver-swan-website.vercel.app" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; font-weight: 500; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; text-decoration-color: var(--accent)"><span>Thesis site</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg></a>
+          <a href="https://github.com/KeMeNoToRiKo/ArduinoUrinalysis" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; font-weight: 500; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; text-decoration-color: var(--accent)"><span>Firmware</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg></a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <main>
+    <!-- Facts -->
+    <div style="border-bottom: 1px solid var(--line-soft)">
+      <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 64px); box-sizing: border-box">
+        <dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 0 40px">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 28px 0 32px">
+            <dt style="font-size: 12.5px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted)">Type</dt>
+            <dd style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 22px; line-height: 1.3">Undergraduate thesis, team of four</dd>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 28px 0 32px">
+            <dt style="font-size: 12.5px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted)">Built with</dt>
+            <dd style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 22px; line-height: 1.3">Arduino C++, SwiftUI, Kotlin</dd>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 28px 0 32px">
+            <dt style="font-size: 12.5px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted)">Classifier</dt>
+            <dd style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 22px; line-height: 1.3">Enhanced Fuzzy k-NN</dd>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 28px 0 32px">
+            <dt style="font-size: 12.5px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted)">Shown at</dt>
+            <dd style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 22px; line-height: 1.3">CS Expo 2026</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Interactive demo -->
+    <section id="demo" aria-labelledby="demo-title" style="max-width: 1280px; margin: 0 auto; padding: clamp(56px, 7vw, 96px) clamp(20px, 5vw, 64px); box-sizing: border-box; display: flex; flex-direction: column; gap: 32px; scroll-margin-top: 8px">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px 64px">
+        <div style="display: flex; flex-direction: column; gap: 18px">
+          <p style="margin: 0; display: flex; align-items: center; gap: 14px; font-size: 13px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted)">
+            <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; background: var(--accent-2); transform: rotate(45deg); flex: none"></span>
+            <span>Try it</span>
+          </p>
+          <h2 id="demo-title" style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: clamp(2.5rem, 4.4vw, 4rem); line-height: 1; letter-spacing: -0.02em">The hydration classifier</h2>
+        </div>
+        <p style="margin: 0; max-width: 34rem; font-size: 16.5px; line-height: 1.6; color: var(--ink-2); text-wrap: pretty">This is the app’s classifier, ported line for line from Swift. Move the sliders the way the sensors would, and watch how each level’s fuzzy vote shifts.</p>
+      </div>
+      <div class="demo" id="ss-demo">
+        <div class="demo-card">
+          <h3 class="demo-h">Set a reading</h3>
+          <div class="field">
+            <p class="demo-label">Start from a level</p>
+            <div class="chips" id="ss-presets">
+              <button type="button" class="chip" data-level="1" aria-pressed="false" title="Level 1: Overhydration"><span class="dot"></span>1</button>
+              <button type="button" class="chip" data-level="2" aria-pressed="true" title="Level 2: Well hydrated"><span class="dot"></span>2</button>
+              <button type="button" class="chip" data-level="3" aria-pressed="false" title="Level 3: Well hydrated"><span class="dot"></span>3</button>
+              <button type="button" class="chip" data-level="4" aria-pressed="false" title="Level 4: Minimal dehydration"><span class="dot"></span>4</button>
+              <button type="button" class="chip" data-level="5" aria-pressed="false" title="Level 5: Significant dehydration"><span class="dot"></span>5</button>
+              <button type="button" class="chip" data-level="6" aria-pressed="false" title="Level 6: Significant dehydration"><span class="dot"></span>6</button>
+              <button type="button" class="chip" data-level="7" aria-pressed="false" title="Level 7: Serious dehydration"><span class="dot"></span>7</button>
+              <button type="button" class="chip" data-level="8" aria-pressed="false" title="Level 8: Serious dehydration"><span class="dot"></span>8</button>
+              <button type="button" class="chip" data-preset="highph" aria-pressed="false">High pH</button>
+              <button type="button" class="chip" data-preset="lowph" aria-pressed="false">Low pH</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-row"><label for="ss-tds">Dissolved solids (TDS)</label><span class="field-val" id="ss-tds-out"></span></div>
+            <input type="range" id="ss-tds" min="0" max="1100" step="5" value="180">
+            <p class="demo-note">Specific gravity <strong class="mono" id="ss-sg-out"></strong>, from SG = 1.001 + 0.000036 × TDS</p>
+          </div>
+          <div class="field">
+            <div class="field-row"><label for="ss-hue">Color (hue)</label><span class="field-val"><span id="ss-swatch" class="ss-swatch" aria-hidden="true"></span><span id="ss-hue-out"></span></span></div>
+            <input type="range" id="ss-hue" min="10" max="75" step="0.5" value="52.5">
+            <p class="demo-note">Lower hue is deeper amber; the swatch is only an approximation.</p>
+          </div>
+          <div class="field">
+            <div class="field-row"><label for="ss-ph">pH</label><span class="field-val" id="ss-ph-out"></span></div>
+            <input type="range" id="ss-ph" min="3" max="10" step="0.1" value="6.0">
+          </div>
+          <div class="field">
+            <p class="demo-label" id="ss-k-label">Neighbors (k)</p>
+            <div class="seg" id="ss-k" role="group" aria-labelledby="ss-k-label">
+              <button type="button" data-k="3" aria-pressed="false">3</button>
+              <button type="button" data-k="5" aria-pressed="false">5</button>
+              <button type="button" data-k="7" aria-pressed="true">7</button>
+            </div>
+            <p class="demo-note">The app runs k = 7; the thesis validation reported k = 3.</p>
+          </div>
+        </div>
+        <div class="demo-card">
+          <h3 class="demo-h">Classification</h3>
+          <div aria-live="polite" style="display: flex; flex-direction: column; gap: 18px">
+            <span class="status" id="ss-status"><span class="status-icon" aria-hidden="true"></span><span class="status-text"></span></span>
+            <div class="stats">
+              <div class="stat"><span class="stat-k">Hydration</span><span class="stat-v" id="ss-level"></span><span class="stat-s" id="ss-label"></span></div>
+              <div class="stat"><span class="stat-k">Confidence</span><span class="stat-v" id="ss-conf"></span><span class="stat-s">Clamped to 60–97%</span></div>
+            </div>
+            <p class="demo-note">Flags: <strong id="ss-flags"></strong></p>
+          </div>
+          <div class="field">
+            <p class="demo-label">Vote share by level</p>
+            <div id="ss-bars" class="ss-bars" role="img"></div>
+            <p class="demo-note">Nearest level prototypes: <span class="mono" id="ss-neighbors"></span></p>
+          </div>
+          <div class="field">
+            <p class="demo-label">What the app says</p>
+            <ul class="obs" id="ss-messages"></ul>
+          </div>
+          <p class="demo-note">A screening demo with readings you set by hand, for illustration only. It is not a medical device and not medical advice.</p>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="ss-how" style="border-top: 1px solid var(--line-soft)">
+      <div style="max-width: 1280px; margin: 0 auto; padding: clamp(80px, 10vw, 136px) clamp(20px, 5vw, 64px); box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 32px 64px">
+        <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 18px">
+          <p style="margin: 0; display: flex; align-items: center; gap: 14px; font-size: 13px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted)">
+            <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; background: var(--accent-2); transform: rotate(45deg); flex: none"></span>
+            <span>System</span>
+          </p>
+          <h2 id="ss-how" style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: clamp(2.5rem, 4.4vw, 4rem); line-height: 1; letter-spacing: -0.02em">How a sample is read</h2>
+        </div>
+        <div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 40px">
+          <p style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: clamp(1.5rem, 2.4vw, 2.25rem); line-height: 1.35; text-wrap: pretty">A sealed optical chamber replaces room lighting and guesswork, and three measurements are read together, because color alone can misread hydration.</p>
+          <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 0 40px">
+            <li style="display: flex; align-items: baseline; gap: 16px; padding: 20px 0; border-top: 1px solid var(--line)">
+              <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; background: var(--accent); transform: translateY(-2px) rotate(45deg); flex: none"></span>
+              <span style="font-size: 16.5px; line-height: 1.55"><strong>Controlled enclosure.</strong> An opaque housing with a matte-black interior and fixed white light, so ambient light never reaches the sample.</span>
+            </li>
+            <li style="display: flex; align-items: baseline; gap: 16px; padding: 20px 0; border-top: 1px solid var(--line)">
+              <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; background: var(--accent); transform: translateY(-2px) rotate(45deg); flex: none"></span>
+              <span style="font-size: 16.5px; line-height: 1.55"><strong>Multi-modal sensing.</strong> A digital pH sensor, a TDS sensor for specific gravity, an AS7341 11-channel light sensor and an ESP32 camera.</span>
+            </li>
+            <li style="display: flex; align-items: baseline; gap: 16px; padding: 20px 0; border-top: 1px solid var(--line)">
+              <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; background: var(--accent); transform: translateY(-2px) rotate(45deg); flex: none"></span>
+              <span style="font-size: 16.5px; line-height: 1.55"><strong>Offline apps.</strong> Readings travel over Bluetooth Low Energy to native apps that store and classify them on the phone, with no internet needed.</span>
+            </li>
+            <li style="display: flex; align-items: baseline; gap: 16px; padding: 20px 0; border-top: 1px solid var(--line)">
+              <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; background: var(--accent); transform: translateY(-2px) rotate(45deg); flex: none"></span>
+              <span style="font-size: 16.5px; line-height: 1.55"><strong>EF-KNN classification.</strong> Fuzzy memberships weight each neighbor’s vote, assigning one of eight hydration levels and raising flags A–C.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="ss-results" style="border-top: 1px solid var(--line-soft)">
+      <div style="max-width: 1280px; margin: 0 auto; padding: clamp(80px, 10vw, 136px) clamp(20px, 5vw, 64px); box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 32px 64px">
+        <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 18px">
+          <p style="margin: 0; display: flex; align-items: center; gap: 14px; font-size: 13px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted)">
+            <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; background: var(--accent-2); transform: rotate(45deg); flex: none"></span>
+            <span>Results</span>
+          </p>
+          <h2 id="ss-results" style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: clamp(2.5rem, 4.4vw, 4rem); line-height: 1; letter-spacing: -0.02em">What the validation showed</h2>
+        </div>
+        <div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 40px">
+          <p style="margin: 0; font-size: 18px; line-height: 1.65; color: var(--ink-2); text-wrap: pretty">Validated across 150 independent trials with chemically modified synthetic urine, spanning eight hydration levels and four abnormality classes.</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: 16px">
+            <div style="display: flex; flex-direction: column; gap: 8px; padding: 22px 24px; border: 1px solid var(--line-soft); border-radius: 18px; background: var(--surface)">
+              <span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: clamp(2.25rem, 3.6vw, 3rem); line-height: 1; font-variant-numeric: lining-nums">100%</span>
+              <span style="font-size: 15.5px; font-weight: 500; line-height: 1.4">Hydration classification accuracy</span>
+              <span style="font-size: 14px; line-height: 1.5; color: var(--muted)">All eight levels correct, macro AUC-ROC 1.00</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; padding: 22px 24px; border: 1px solid var(--line-soft); border-radius: 18px; background: var(--surface)">
+              <span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: clamp(2.25rem, 3.6vw, 3rem); line-height: 1; font-variant-numeric: lining-nums">7.72%</span>
+              <span style="font-size: 15.5px; font-weight: 500; line-height: 1.4">pH sensor error (MAPE)</span>
+              <span style="font-size: 14px; line-height: 1.5; color: var(--muted)">Within the 10% threshold</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; padding: 22px 24px; border: 1px solid var(--line-soft); border-radius: 18px; background: var(--surface)">
+              <span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: clamp(2.25rem, 3.6vw, 3rem); line-height: 1; font-variant-numeric: lining-nums">0.13%</span>
+              <span style="font-size: 15.5px; font-weight: 500; line-height: 1.4">Specific gravity error (MAPE)</span>
+              <span style="font-size: 14px; line-height: 1.5; color: var(--muted)">Within the 10% threshold</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; padding: 22px 24px; border: 1px solid var(--line-soft); border-radius: 18px; background: var(--surface)">
+              <span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: clamp(2.25rem, 3.6vw, 3rem); line-height: 1; font-variant-numeric: lining-nums">99.33%</span>
+              <span style="font-size: 15.5px; font-weight: 500; line-height: 1.4">Bluetooth delivery rate</span>
+              <span style="font-size: 14px; line-height: 1.5; color: var(--muted)">Mean sensor-to-screen time about 8.6 s</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="ss-role" style="border-top: 1px solid var(--line-soft)">
+      <div style="max-width: 1280px; margin: 0 auto; padding: clamp(80px, 10vw, 136px) clamp(20px, 5vw, 64px); box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 32px 64px">
+        <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 18px">
+          <p style="margin: 0; display: flex; align-items: center; gap: 14px; font-size: 13px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted)">
+            <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; background: var(--accent-2); transform: rotate(45deg); flex: none"></span>
+            <span>My part</span>
+          </p>
+          <h2 id="ss-role" style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: clamp(2.5rem, 4.4vw, 4rem); line-height: 1; letter-spacing: -0.02em">Lead developer</h2>
+        </div>
+        <div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 40px">
+          <p style="margin: 0; font-size: 18px; line-height: 1.65; color: var(--ink-2); text-wrap: pretty">Silver Swan was built by a four-member team for our undergraduate thesis at FEU Alabang and exhibited at CS Expo 2026. I led development across the device and both apps.</p>
+          <div style="border: 1px solid var(--line-soft); border-radius: 20px; overflow: hidden; background: var(--surface)">
+            <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; padding: 18px 24px; border-bottom: 1px solid var(--line-soft); background: var(--surface-2)">
+              <span style="font-family: 'DM Mono', ui-monospace, Menlo, monospace; font-size: 13.5px; font-weight: 500">silver-swan/</span>
+              <span style="font-size: 13px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted)">C++ · Swift · Kotlin · Python</span>
+            </div>
+            <dl style="margin: 0; display: flex; flex-direction: column">
+              <div style="display: flex; flex-wrap: wrap; gap: 8px 32px; padding: 20px 24px; border-bottom: 1px solid var(--line-soft)">
+                <dt style="flex: 0 0 220px; display: flex; flex-wrap: wrap; gap: 4px 12px; font-family: 'DM Mono', ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 500; color: var(--accent)"><span>ArduinoUrinalysis.ino</span><span>phSensor</span><span>tdsSensor</span><span>colourSensor</span></dt>
+                <dd style="flex: 1 1 280px; margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2)">Modular Arduino firmware for the pH, TDS and spectral color sensors.</dd>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px 32px; padding: 20px 24px; border-bottom: 1px solid var(--line-soft)">
+                <dt style="flex: 0 0 220px; display: flex; flex-wrap: wrap; gap: 4px 12px; font-family: 'DM Mono', ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 500; color: var(--accent)"><span>Keypad</span><span>Menu</span><span>Bluetooth</span></dt>
+                <dd style="flex: 1 1 280px; margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2)">The on-device keypad menu and the Bluetooth link to the phone.</dd>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px 32px; padding: 20px 24px; border-bottom: 1px solid var(--line-soft)">
+                <dt style="flex: 0 0 220px; display: flex; flex-wrap: wrap; gap: 4px 12px; font-family: 'DM Mono', ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 500; color: var(--accent)"><span>Urino (iOS)</span></dt>
+                <dd style="flex: 1 1 280px; margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2)">SwiftUI app with SwiftData storage, CoreBluetooth, and the Enhanced Fuzzy k-NN classifier written in Swift.</dd>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px 32px; padding: 20px 24px; border-bottom: 1px solid var(--line-soft)">
+                <dt style="flex: 0 0 220px; display: flex; flex-wrap: wrap; gap: 4px 12px; font-family: 'DM Mono', ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 500; color: var(--accent)"><span>Urisis (Android)</span></dt>
+                <dd style="flex: 1 1 280px; margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2)">Kotlin and Jetpack Compose app; like Urino, it runs fully offline over Bluetooth Low Energy.</dd>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px 32px; padding: 20px 24px">
+                <dt style="flex: 0 0 220px; display: flex; flex-wrap: wrap; gap: 4px 12px; font-family: 'DM Mono', ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 500; color: var(--accent)"><span>UrinalysisAnalysis.py</span></dt>
+                <dd style="flex: 1 1 280px; margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2)">The Python validation script behind the accuracy, AUC-ROC and MAPE results.</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- More projects and footer -->
+  <footer class="band stars" aria-labelledby="next-title" style="background-color: var(--band); color: var(--band-ink)">
+    <div style="max-width: 1280px; margin: 0 auto; padding: clamp(80px, 10vw, 136px) clamp(20px, 5vw, 64px) clamp(56px, 7vw, 96px); box-sizing: border-box; display: flex; flex-direction: column; gap: 56px">
+      <div style="display: flex; flex-direction: column; gap: 18px">
+        <p style="margin: 0; display: flex; align-items: center; gap: 14px; font-size: 13px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--band-muted)">
+            <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; background: var(--accent-2); transform: rotate(45deg); flex: none"></span>
+            <span>Keep exploring</span>
+          </p>
+        <h2 id="next-title" style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: clamp(3rem, 7vw, 6rem); line-height: 1; letter-spacing: -0.02em">More projects</h2>
+      </div>
+      <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 16px">
+        <li style="display: flex">
+          <a class="tile" href="spacewar.html" style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; min-height: 132px; padding: 22px 24px; box-sizing: border-box; border: 1px solid var(--band-line); border-radius: 18px">
+            <span style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+              <span style="font-size: 12.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--band-muted)">Game · C++</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+            </span>
+            <span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 26px; line-height: 1.2; overflow-wrap: anywhere">Space War</span>
+          </a>
+        </li>
+        <li style="display: flex">
+          <a class="tile" href="serverv2.html" style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; min-height: 132px; padding: 22px 24px; box-sizing: border-box; border: 1px solid var(--band-line); border-radius: 18px">
+            <span style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+              <span style="font-size: 12.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--band-muted)">Back end</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+            </span>
+            <span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 26px; line-height: 1.2; overflow-wrap: anywhere">ServerV2</span>
+          </a>
+        </li>
+        <li style="display: flex">
+          <a class="tile" href="team-balancing.html" style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; min-height: 132px; padding: 22px 24px; box-sizing: border-box; border: 1px solid var(--band-line); border-radius: 18px">
+            <span style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+              <span style="font-size: 12.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--band-muted)">Machine learning</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+            </span>
+            <span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 26px; line-height: 1.2; overflow-wrap: anywhere">Sports Team Balancing</span>
+          </a>
+        </li>
+        <li style="display: flex">
+          <a class="tile" href="https://silver-swan-website.vercel.app" target="_blank" rel="noopener" style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; min-height: 132px; padding: 22px 24px; box-sizing: border-box; border: 1px solid var(--band-line); border-radius: 18px">
+            <span style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+              <span style="font-size: 12.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--band-muted)">Thesis site</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg>
+            </span>
+            <span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 26px; line-height: 1.2; overflow-wrap: anywhere">silver-swan-website.vercel.app</span>
+          </a>
+        </li>
+        <li style="display: flex">
+          <a class="tile" href="index.html#projects" style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; min-height: 132px; padding: 22px 24px; box-sizing: border-box; border: 1px solid var(--band-line); border-radius: 18px">
+            <span style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+              <span style="font-size: 12.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--band-muted)">Portfolio</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+            </span>
+            <span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 26px; line-height: 1.2; overflow-wrap: anywhere">Back to all projects</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div style="border-top: 1px solid var(--band-line)">
+      <div style="max-width: 1280px; margin: 0 auto; padding: 28px clamp(20px, 5vw, 64px); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 32px">
+        <p style="margin: 0; font-size: 14px; color: var(--band-muted)">© 2026 Xavier Michael Emmanuel N. Ombrog. All rights reserved.</p>
+        <p style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-style: italic; font-size: 20px; color: var(--band-muted)">“Thanks be to God.”</p>
+      </div>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
